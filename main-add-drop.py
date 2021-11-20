@@ -1,0 +1,1 @@
+ALTER TABLE `pop_order_data_0` ADD column `VERSION` int(11) DEFAULT '0' COMMENT '版本号';

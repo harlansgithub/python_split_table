@@ -24,7 +24,7 @@ for page in range(1,33):
         rowset = 0
         for rowNum in range (1,sumCount):
             if rowNum == lineNums[rowset]:
-                startNum = rowNum;
+                startNum = rowNum
                 rowset = rowset + 1
                 if rowset < len(lineNums):
                     endNum = lineNums[rowset]+1
@@ -33,20 +33,32 @@ for page in range(1,33):
                 for j in range (pageStart,pageEnd):
                     for i in range(startNum,endNum):
                         text = linecache.getline('db.sql',i)
+                        tableName = ''
+                        newTableName = ''
+                        if text.__contains__("set @sharding ="):
+                            continue
                         if text.__contains__("CREATE TABLE"):
+                            # 获取tableName
+                            tableName = text.split("`")[1]
+                            # 生成新的tableName
+                            newTableName = tableName + '_' + str(j)
+                            # 替换成新表名
+                            text = text.replace(tableName.strip(), newTableName.strip())
                             # 字符串转LIST
-                            convertList = list(text)
+                            #convertList = list(text)
                             # 插入表号
-                            convertList.insert(len(text) - 4, '_' + str(j))
+                            #convertList.insert(len(text) - 4, '_' + str(j))
                             # LIST转换成字符串
-                            text = "".join(convertList)
+                            #text = "".join(convertList)
+                            hashStr = linecache.getline('db.sql', i - 1)
+                            hashStr = hashStr.replace(tableName, newTableName)
+                            file.write(hashStr)
                         file.write(text)
                         i = i + 1
                 if endNum == sumCount + 1:
                     break
             else:
                 rowNum = rowNum + 1
-
 
 
 
